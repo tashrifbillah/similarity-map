@@ -20,8 +20,16 @@ def find_contours(img, sim_map, eta):
     ax.imshow(sim_map, cmap='hot', alpha=0.5)
 
     contours = measure.find_contours(sim_map, eta, fully_connected='high')
+    centers = []
+    f= open('measures/centers.txt', 'w')
     for contour in contours:
         ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
+        
+        # calculate centers
+        f.write('{},{}\n'.format(round(contour[:, 1].mean(),3),
+                                  round(contour[:, 1].mean(),3))) 
+    
+    f.close()
         
     ax.axis('image')
     ax.set_xticks([])
