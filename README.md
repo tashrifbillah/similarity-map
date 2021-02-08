@@ -52,6 +52,10 @@ In addition, centers of the contours are saved in [centers.txt](measures/centers
 The `app.py` accepts only one configurable parameter `level` (`[0,1]`) as in [here](https://scikit-image.org/docs/dev/api/skimage.measure.html#find-contours).
 It renders a new set of contours for each new threshold provided on the command line.
 
+* Default is 0.3
+* Try <0.3 for more contours
+* Try >0.7 for less contours
+
 
 ## TODO
 
