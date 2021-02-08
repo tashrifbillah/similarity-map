@@ -13,7 +13,8 @@ from skimage.morphology import disk
 from skimage.filters import rank
 import cv2
 
-
+from matplotlib import image
+from helpers import rgb2gray
 
 def windowed_histogram_similarity(image, selem, reference_hist, n_bins):
     # Compute normalized windowed histogram feature vector for each pixel
@@ -43,61 +44,54 @@ def windowed_histogram_similarity(image, selem, reference_hist, n_bins):
     return similarity
 
 
+def calc_sim(img, coin):
+    
+    if img.shape[-1]==3:
+        img= rgb2gray(img)
+    img= img.astype('uint8')
+    img= img_as_ubyte(img)
+    
+    if coin.shape[-1]==3:
+        coin= rgb2gray(coin)
+    coin= coin.astype('uint8')
+    coin= img_as_ubyte(coin)
 
-from matplotlib import image
-from helpers import rgb2gray
+    quantized_img= img // 16
+    coin= coin // 16
+                         
+                         
+    # Compute coin histogram and normalize
+    coin_hist, _ = np.histogram(coin.flatten(), bins=16, range=(0, 16))
+    coin_hist = coin_hist.astype(float) / np.sum(coin_hist)
 
-img= image.imread('img/coins.jpg')
-# img= img_as_ubyte('img/coins.jpg')
-img= rgb2gray(img)
-img= img.astype('uint8')
-img= img_as_ubyte(img)
+    # Compute a disk shaped mask that will define the shape of our sliding window
+    # A disk with diameter equal to max(w,h) of the roi should be a big enough reference
+    selem = disk(max(coin.shape)//2)
 
-coin= image.imread('img/cropped.jpg')
-# coin= img_as_ubyte('img/coins.jpg')
-coin= rgb2gray(coin)
-coin= coin.astype('uint8')
-coin= img_as_ubyte(coin)
-
-quantized_img= img // 16
-# FIXME the following quantization should be same as the above
-coin= coin // 16
-                     
-                     
-# Compute coin histogram and normalize
-coin_hist, _ = np.histogram(coin.flatten(), bins=16, range=(0, 16))
-coin_hist = coin_hist.astype(float) / np.sum(coin_hist)
-
-# Compute a disk shaped mask that will define the shape of our sliding window
-# Example coin is ~44px across, so make a disk 61px wide (2 * rad + 1) to be
-# big enough for other coins too.
-selem = disk(max(coin.shape)//2)
-
-# Compute the similarity across the complete image
-similarity = windowed_histogram_similarity(quantized_img, selem, coin_hist,
-                                           coin_hist.shape[0])
+    # Compute the similarity across the complete image
+    similarity = windowed_histogram_similarity(quantized_img, selem, coin_hist, coin_hist.shape[0])
 
 
 
-fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(10, 10))
+    fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(10, 10))
 
-axes[0, 0].imshow(quantized_img, cmap='gray')
-axes[0, 0].set_title('Quantized image')
-axes[0, 0].axis('off')
+    axes[0].imshow(quantized_img, cmap='gray')
+    axes[0].set_title('Quantized image')
+    axes[0].axis('off')
+          
+    axes[1].imshow(coin, cmap='gray')
+    axes[1].set_title('Coin from 2nd row, 4th column')
+    axes[1].axis('off')
+          
+    axes[2].imshow(img, cmap='gray')
+    axes[2].imshow(similarity, cmap='hot', alpha=0.5)
+    axes[2].set_title('Original image with overlaid similarity')
+    axes[2].axis('off')
 
-axes[0, 1].imshow(coin, cmap='gray')
-axes[0, 1].set_title('Coin from 2nd row, 4th column')
-axes[0, 1].axis('off')
+    plt.tight_layout()
+    plt.show(block=False)
 
-# axes[1, 0].imshow(img, cmap='gray')
-axes[1, 0].imshow(similarity, cmap='hot', alpha=0.5)
-axes[1, 0].set_title('Original image with overlaid similarity')
-axes[1, 0].axis('off')
-
-
-
-plt.tight_layout()
-plt.show()
-
-cv2.imwrite('img/sim_map.jpg', similarity)
+    cv2.imwrite('img/sim_map.jpg', similarity)
+    
+    return similarity
 
