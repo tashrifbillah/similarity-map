@@ -22,6 +22,7 @@ def find_contours(img, sim_map, eta):
     contours = measure.find_contours(sim_map, eta, fully_connected='high')
     centers = []
     f= open('measures/centers.txt', 'w')
+    f.write('x,y\n')
     for contour in contours:
         ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
         
