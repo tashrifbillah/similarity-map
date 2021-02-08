@@ -33,7 +33,9 @@ def crop_roi(filename):
     clone = image.copy() 
     cv2.namedWindow("image") 
     cv2.setMouseCallback("image", draw_box) 
-
+    
+    print('\n**Draw a box around region of interest, press q when done, press r to reset**\n')
+    
     while True: 
         cv2.imshow("image", image) 
         key = cv2.waitKey(1) & 0xFF

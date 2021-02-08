@@ -80,7 +80,7 @@ def calc_sim(img, coin):
     axes[0].axis('off')
           
     axes[1].imshow(coin, cmap='gray')
-    axes[1].set_title('Coin from 2nd row, 4th column')
+    axes[1].set_title('Quantized ROI image')
     axes[1].axis('off')
           
     axes[2].imshow(img, cmap='gray')

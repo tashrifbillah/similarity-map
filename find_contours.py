@@ -26,4 +26,5 @@ def find_contours(img, sim_map, eta):
     ax.axis('image')
     ax.set_xticks([])
     ax.set_yticks([])
-    plt.show()
+    ax.set_title(f'Contours for eta={eta}')
+    plt.show(block=False)
