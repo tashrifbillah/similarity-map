@@ -2,6 +2,14 @@ This Python application takes user input for a region of interest (ROI) over an 
 searches the whole image for regions similar to that of the ROI. Upon finding similar 
 regions, it draws contours around them according to a user defined parameter.
 
+Table of Contents
+-----------------
+
+  * [Installation](#installation)
+  * [Run](#run)
+  * [Workflow](#workflow)
+  * [Configuration](#configuration)
+  * [TODO](#todo)
 
 
 ## Installation
